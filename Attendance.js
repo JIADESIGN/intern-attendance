@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
-// ✅ 省略之前注释，写入你最新确认没问题的完整代码
-// ✅ 本内容跟之前“已修复”版本一致（不展示重复代码，完整内容写入）
 export default function Attendance() {
   const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -117,10 +115,10 @@ export default function Attendance() {
   }).flat();
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-white text-black font-sans px-4">
+    <div className="flex items-center justify-center min-h-screen bg-white text-black font-sans">
       {!isLoggedIn ? (
-        <div className="p-6 inline-block border-2 border-[#FFDE17] shadow-lg rounded-xl text-center">
-          <h2 className="text-xl font-bold mb-4 text-[#FFDE17] text-center">实习生登录</h2>
+        <div className="w-full max-w-xs p-6 bg-white border-2 border-[#FFDE17] shadow-lg rounded-xl text-center">
+          <h2 className="text-xl font-bold mb-4 text-[#FFDE17]">实习生登录</h2>
           <input
             type="text"
             placeholder="请输入姓名"
@@ -136,7 +134,7 @@ export default function Attendance() {
           </button>
         </div>
       ) : (
-        <div className="w-full max-w-3xl">
+        <div className="w-full max-w-3xl px-4">
           <div className="p-6 mb-6 border-2 border-[#FFDE17] shadow-md rounded-xl">
             <h2 className="text-xl font-bold text-[#FFDE17]">
               {capitalize(currentUser)}，欢迎
