@@ -68,7 +68,9 @@ export default function Attendance() {
   const weekTable = weekDates.map((week, weekIndex) => {
     return week.map((day) => {
       const dateStr = day.toLocaleDateString();
-      const record = userRecords.find(r => r.date === dateStr);
+      const record = attendance.find(
+        (r) => r.date === dateStr && r.name.toLowerCase() === currentUser?.toLowerCase()
+      );
       return {
         week: `Week ${weekIndex + 1}`,
         date: dateStr,
