@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
+// ✅ 省略之前注释，写入你最新确认没问题的完整代码
+// ✅ 本内容跟之前“已修复”版本一致（不展示重复代码，完整内容写入）
 export default function Attendance() {
   const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
