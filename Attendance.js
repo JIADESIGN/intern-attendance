@@ -5,14 +5,15 @@ export default function Attendance() {
   const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [attendance, setAttendance] = useState([
-    { id: 1, name: "Kelly", date: "2025-03-19", time: "10:00" },
-    { id: 2, name: "Kelly", date: "2025-03-26", time: "10:00" },
-    { id: 3, name: "Kexin", date: "2025-03-20", time: "10:00" }
+    { id: 1, name: "kelly", date: "2025-03-19", time: "10:00" },
+    { id: 2, name: "kelly", date: "2025-03-26", time: "10:00" },
+    { id: 3, name: "kexin", date: "2025-03-20", time: "10:00" }
   ]);
   const [currentUser, setCurrentUser] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString());
 
-  const isAdmin = currentUser === "admin";
+  const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+  const isAdmin = currentUser?.toLowerCase() === "admin";
 
   const getWeekday = (dateStr) => {
     const date = new Date(dateStr);
@@ -35,7 +36,8 @@ export default function Attendance() {
 
   const handleLogin = () => {
     if (name.trim()) {
-      setCurrentUser(name);
+      const normalized = name.trim().toLowerCase();
+      setCurrentUser(normalized);
       setIsLoggedIn(true);
     } else {
       toast.error("请输入姓名");
@@ -59,19 +61,19 @@ export default function Attendance() {
     }
   };
 
-  const attendanceCountByName = (name) => attendance.filter((r) => r.name === name).length;
-  const userRecords = isAdmin ? attendance : attendance.filter(r => r.name === currentUser);
+  const attendanceCountByName = (name) => attendance.filter((r) => r.name.toLowerCase() === name.toLowerCase()).length;
+  const userRecords = isAdmin ? attendance : attendance.filter(r => r.name.toLowerCase() === currentUser.toLowerCase());
 
   const weekDates = getWeekDates("2025-03-17", 24);
   const weekTable = weekDates.map((week, weekIndex) => {
     return week.map((day) => {
       const dateStr = day.toLocaleDateString();
-      const record = userRecords.find(r => r.date === dateStr && (isAdmin || r.name === currentUser));
+      const record = userRecords.find(r => r.date === dateStr);
       return {
         week: `Week ${weekIndex + 1}`,
         date: dateStr,
         weekday: getWeekday(dateStr),
-        name: currentUser,
+        name: capitalize(currentUser),
         time: record?.time || "/"
       };
     });
@@ -101,7 +103,7 @@ export default function Attendance() {
       ) : (
         <div className="w-full max-w-3xl">
           <div className="p-6 mb-6 border-2 border-[#FFDE17] shadow-md rounded-xl">
-            <h2 className="text-xl font-bold text-[#FFDE17]">{currentUser}，欢迎</h2>
+            <h2 className="text-xl font-bold text-[#FFDE17]">{capitalize(currentUser)}，欢迎</h2>
             <p className="mt-2">今天是：{currentDate}（周{getWeekday(currentDate)}）</p>
             {!isAdmin && (
               <p className="mt-1 text-sm text-gray-600">你已打卡 {attendanceCountByName(currentUser)} 天</p>
@@ -119,7 +121,7 @@ export default function Attendance() {
                 <h3 className="font-bold mb-2">各成员已打卡天数：</h3>
                 <ul className="list-disc list-inside">
                   {uniqueNames.map((n) => (
-                    <li key={n}>{n}: {attendanceCountByName(n)} 天</li>
+                    <li key={n}>{capitalize(n)}: {attendanceCountByName(n)} 天</li>
                   ))}
                 </ul>
               </div>
