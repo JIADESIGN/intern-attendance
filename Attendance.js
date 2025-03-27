@@ -119,7 +119,7 @@ export default function Attendance() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-white text-black font-sans px-4">
       {!isLoggedIn ? (
-        <div className="p-6 w-96 border-2 border-[#FFDE17] shadow-lg rounded-xl">
+        <div className="p-6 w-96 border-2 border-[#FFDE17] shadow-lg rounded-xl mx-auto">
           <h2 className="text-xl font-bold mb-4 text-[#FFDE17] text-center">实习生登录</h2>
           <input
             type="text"
