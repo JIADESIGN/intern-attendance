@@ -1,16 +1,27 @@
 import { useState } from "react";
+import { useEffect } from "react";
+import { db } from "./firebase";
+import { collection, getDocs, addDoc } from "firebase/firestore";
+
 import { toast } from "react-hot-toast";
 
 export default function Attendance() {
   const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [attendance, setAttendance] = useState([
-    { id: 1, name: "kelly", date: "2025-03-19", time: "10:00" },
-    { id: 2, name: "kelly", date: "2025-03-26", time: "10:00" },
-    { id: 3, name: "kexin", date: "2025-03-20", time: "10:00" }
-  ]);
+  const [attendance, setAttendance] = useState([]);
+
   const [currentUser, setCurrentUser] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString());
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const querySnapshot = await getDocs(collection(db, "attendance"));
+      const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setAttendance(data);
+    };
+    fetchData();
+  }, []);
+  
 
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   const isAdmin = currentUser?.toLowerCase() === "admin";
@@ -54,17 +65,24 @@ export default function Attendance() {
     );
 
     if (!hasClockedInToday) {
-      setAttendance([...attendance, {
-        id: attendance.length + 1,
-        name: currentUser,
-        date,
-        time
-      }]);
-      toast.success("打卡成功！");
-    } else {
-      toast("你今天已经打过卡啦！");
+      try {
+        await addDoc(collection(db, "attendance"), {
+          name: currentUser,
+          date,
+          time
+        });
+        toast.success("打卡成功！");
+    
+        // 写入成功后重新获取全部数据（刷新页面）
+        const querySnapshot = await getDocs(collection(db, "attendance"));
+        const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setAttendance(data);
+      } catch (error) {
+        toast.error("打卡失败，请重试");
+        console.error("Error writing to Firestore:", error);
+      }
     }
-  };
+    
 
   const attendanceCountByName = (name) =>
     attendance.filter((r) => r.name.toLowerCase() === name.toLowerCase()).length;
