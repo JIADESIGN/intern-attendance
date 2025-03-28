@@ -1,12 +1,15 @@
-import { useState, useEffect } from "react";
-import { toast } from "react-hot-toast";
+import { useState } from "react";
+import { useEffect } from "react";
 import { db } from "./firebase";
 import { collection, getDocs, addDoc } from "firebase/firestore";
+
+import { toast } from "react-hot-toast";
 
 export default function Attendance() {
   const [name, setName] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [attendance, setAttendance] = useState([]);
+
   const [currentUser, setCurrentUser] = useState(null);
   const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString());
 
@@ -18,6 +21,7 @@ export default function Attendance() {
     };
     fetchData();
   }, []);
+  
 
   const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   const isAdmin = currentUser?.toLowerCase() === "admin";
@@ -51,7 +55,7 @@ export default function Attendance() {
     }
   };
 
-  const handleClockIn = async () => {
+  const handleClockIn = () => {
     const now = new Date();
     const date = now.toLocaleDateString();
     const time = now.toLocaleTimeString();
@@ -68,7 +72,8 @@ export default function Attendance() {
           time
         });
         toast.success("打卡成功！");
-
+    
+        // 写入成功后重新获取全部数据（刷新页面）
         const querySnapshot = await getDocs(collection(db, "attendance"));
         const data = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setAttendance(data);
@@ -76,10 +81,8 @@ export default function Attendance() {
         toast.error("打卡失败，请重试");
         console.error("Error writing to Firestore:", error);
       }
-    } else {
-      toast("你今天已经打过卡啦！");
     }
-  };
+    
 
   const attendanceCountByName = (name) =>
     attendance.filter((r) => r.name.toLowerCase() === name.toLowerCase()).length;
